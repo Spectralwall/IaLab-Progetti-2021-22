@@ -30,7 +30,8 @@ trasforma(est,Lista,ListaModificata):-
     nth0(X,Lista,Elem1), %prendo il valore di 0
     nth0(Destra,Lista,Elem2), %prendo il valore dell'elemento a destra di 0
     replace(Lista,Destra,Elem1,L2), %scambio
-    replace(L2,X,Elem2,ListaModificata). %scambio
+    replace(L2,X,Elem2,ListaModificata), %scambio
+    !.
 
 trasforma(ovest,Lista,ListaModificata):-
     nth0(X, Lista, 0), %trovo lo 0
@@ -38,7 +39,8 @@ trasforma(ovest,Lista,ListaModificata):-
     nth0(X,Lista,Elem1), %prendo il valore di 0
     nth0(Sinistra,Lista,Elem2), %prendo il valore dell'elemento a sinistra di 0
     replace(Lista,Sinistra,Elem1,L2), %scambio
-    replace(L2,X,Elem2,ListaModificata). %scambio
+    replace(L2,X,Elem2,ListaModificata), %scambio
+    !.
 
 trasforma(nord,Lista,ListaModificata):-
     nth0(X, Lista, 0), %trovo lo 0
@@ -46,7 +48,8 @@ trasforma(nord,Lista,ListaModificata):-
     nth0(X,Lista,Elem1), %prendo il valore di 0
     nth0(Su,Lista,Elem2), %prendo il valore dell'elemento a sopra  0
     replace(Lista,Su,Elem1,L2), %scambio
-    replace(L2,X,Elem2,ListaModificata). %scambio
+    replace(L2,X,Elem2,ListaModificata), %scambio
+    !.
 
 trasforma(sud,Lista,ListaModificata):-
     nth0(X, Lista, 0), %trovo lo 0
@@ -54,7 +57,8 @@ trasforma(sud,Lista,ListaModificata):-
     nth0(X,Lista,Elem1), %prendo il valore di 0
     nth0(Giu,Lista,Elem2), %prendo il valore dell'elemento a sotto 0
     replace(Lista,Giu,Elem1,L2), %scambio
-    replace(L2,X,Elem2,ListaModificata). %scambio
+    replace(L2,X,Elem2,ListaModificata), %scambio
+    !.
 
 %funzioni di supporto 
 replace([_|T], 0, X, [X|T]).
