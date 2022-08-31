@@ -37,18 +37,14 @@ listToMatrix(X,Riga,Colonna):-
 
 %Ora scriveremo la distanza di manhattan 
 %Calcolero la distanza per ogni numero e poi le sommero insieme cosi lo stato avrà un somma totale
+distanza_manhattan2(ListaS,ListaSF,[],0).
+distanza_manhattan2(ListaS,ListaSF,[HeadS|TailS],Distanza) :-
+    nth0(X,ListaS,HeadS),
+    nth0(Y,ListaSF,HeadS),
+    listToMatrix(X,RigaS,ColonnaS),
+    listToMatrix(Y,RigaSF,ColonnaSF),
+    Man is abs(RigaS - RigaSF) + abs(ColonnaS - ColonnaSF),
+    distanza_manhattan2(ListaS,ListaSF,TailS,Res),
+    Distanza is Res + Man.
 
-distanza_manhattan(S, SFinale, Distanza) :-
-    aggregate_all(
-        sum(Tot),
-                (     
-                    nth0(PosizioneListIniziale, S, Numero), 
-                    listToMatrix(PosizioneListIniziale, RigaList, ColonnaList),
-                    nth0(PosizioneListFinale, SFinale, Numero), 
-                    listToMatrix(PosizioneListFinale, RigaListFinale, ColonnaListFinale),
-                    Tot is abs(RigaList - RigaListFinale) + abs(ColonnaList - ColonnaListFinale)
-                ), 
-        Distanza).
-    
-
-%Varinate con distanza di manhattan tra due liste
+%dato un numero lo trova nella lista e mi dice la posizione
