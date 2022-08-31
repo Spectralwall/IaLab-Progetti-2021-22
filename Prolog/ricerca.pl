@@ -1,31 +1,17 @@
-replace([_|T], 0, X, [X|T]).
-replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
-replace(L, _, _, L).
+%questo file è dedicato alla scrittura dei metodi di ricerca con ueristica nello spazio degli stati
 
-trasforma(est,Lista,ListaModificata):-
-    nth0(X, Lista, 0), %trovo lo 0
-    Des is X+1, %prendo la posizione in c'e' il numero che voglio spostare
-    nth0(X,Lista,Elem1), %prendo il valore di 0
-    nth0(Des,Lista,Elem2), %prendo il valore dell'elemento a destra di 0
-    replace(Lista,Des,Elem1,L2),
-    replace(L2,X,Elem2,ListaModificata).
+%di seguito viene presentato il primo metodo informato 
+%ovvero il numero di tessere che ha posizione diversa Ovvero La distanza di Hamming
+hamming_distance([],[],0).%caso base
 
-%nth0(X, [1,0,3], 0), trovo la posizione di zero
-%Des is X+1, trovo la posizione dell'elemento a destra di 0 
-%nth0(X,[1,0,3],Elem1), %prendo il valore di 0
-%nth0(Des,[1,0,3],Elem2), prendo il valore dell'elemento a destra di 0
-%replace(Elem2,Elem,[1,0,3],NuovaLista). li rimpiazzo
-%devo fare secondo replace
-
-hamming_distance([],[],0).
-hamming_distance([Head1|Tail1],[Head2|Tail2], Res) :-
+hamming_distance([Head1|Tail1],[Head2|Tail2], Res) :- %caso in cui due numeri siano uguali
     hamming_distance(Tail1,Tail2,Dist),
     Head1 == Head2,
     !,
     Res is Dist+1.
 
-hamming_distance([Head1|Tail1],[Head2|Tail2], Res) :-
-    hamming_distance(Tail1,Tail2,Dist),
+hamming_distance([Head1|Tail1],[Head2|Tail2], Res) :- % caso in cui due numeri siano diversi
+    hamming_distance(Tail1,Tail2,Dist),s
     Head1 \== Head2,
     !,
     Res is Dist+0.
@@ -37,7 +23,6 @@ listToMatrix(X,Riga,Colonna):-
 
 %Ora scriveremo la distanza di manhattan 
 %Calcolero la distanza per ogni numero e poi le sommero insieme cosi lo stato avrà un somma totale
-
 distanza_manhattan(S, SFinale, Distanza) :-
     aggregate_all(
         sum(Tot),
@@ -49,6 +34,7 @@ distanza_manhattan(S, SFinale, Distanza) :-
                     Tot is abs(RigaList - RigaListFinale) + abs(ColonnaList - ColonnaListFinale)
                 ), 
         Distanza).
-    
+
+
 
 %Varinate con distanza di manhattan tra due liste
