@@ -47,3 +47,19 @@ distanza_manhattan(ListaS,ListaSF,[HeadS|TailS],Distanza) :-
     distanza_manhattan(ListaS,ListaSF,TailS,Res),
     Distanza is Res + Man,
     !.
+
+%Da qua iniziano i metodi per la ricerca della soluzione in modo informato
+cerca_soluzione(ListaAzioni):- %metodo per la ricerca della soluzione
+    statoIniziale(SIniziale), %prendo stato iniziale.
+    stattoFinale(SFinale), %prendo stato finale
+    aStar(SIniziale,SFinale,ListaAzioni,[],[],0).%Stato iniziale, Stato finale, Lista di azioni compiute, lista nodi visitati, lista nodi da visitare, costo passi fatti
+
+aStar(SIniziale,SFinale,ListaAzioni,Visitati,Visitare,Costo):-
+    trovoMosse(SIniziale,SFinale,Visitare,[]),%cerco i nuov stati al confine 
+
+    
+
+trovoMosse(SIniziale,SFinale,Visitare,Risultato):-%funzione interna che aggiunge alla lista visitabili i nodi al confine
+    applicabile(Az,SIniziale),%vedo quali sono le mosse possibili
+    wrapper_manhattan(SIniziale,SFinale,Az,Distanza),%calcolo il costo dalla nodo possibile allo stato finale.
+    append(Visitare,[SIniziale,Az,Distanza],Risultato).

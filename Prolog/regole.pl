@@ -2,22 +2,22 @@
 
 %applicabile(AZ,S) l'azione AZ 'e applicabile allo staso S ?
 %descriviamo l'applicabilita di una trasformazione 
-applicabile(nord,lista):-
-    nth0(X, lista, 0),
+applicabile(nord,Lista):-
+    nth0(X, Lista, 0),
     X>2.
 
-applicabile(sud,lista):-
-    nth0(X, lista, 0),
+applicabile(sud,Lista):-
+    nth0(X, Lista, 0),
     X<6.
 
-applicabile(est,lista):-
-    nth0(X, lista, 0),
+applicabile(est,Lista):-
+    nth0(X, Lista, 0),
     X\=3,
     X\=5,
     X\=8.
 
-applicabile(ovest,lista):-
-    nth0(X, lista, 0),
+applicabile(ovest,Lista):-
+    nth0(X, Lista, 0),
     X\=0,
     X\=3,
     X\=6.
