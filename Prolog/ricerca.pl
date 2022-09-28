@@ -30,7 +30,7 @@ listToMatrix(X,Riga,Colonna):-
 
 %Ora scriveremo la distanza di manhattan 
 %Calcolero la distanza per ogni numero e poi le sommero insieme cosi lo stato avrà un somma totale
-distanza_manhattan(ListaS,ListaSF,[],0).
+distanza_manhattan(_,_,[],0).
 distanza_manhattan(ListaS,ListaSF,[HeadS|TailS],Distanza) :- %lista iniziale, lista goal, lista iniziale ,nome variabile risultato
     nth0(X,ListaS,HeadS),
     nth0(Y,ListaSF,HeadS),
@@ -59,54 +59,135 @@ wrapper_manhattan(ListaS,ListaSF,Direzione,Distanza):-
 
 %Da qua iniziano i metodi per la ricerca della soluzione in modo informato
 cerca_soluzione(ListaAzioni):- %metodo per la ricerca della soluzione
-    statoInzialeMini(S), %prendo stato iniziale.
+    statoIniziale(S), %prendo stato iniziale.
     stattoFinale(SFinale), %prendo stato finale
-    aStar(S,SFinale,ListaAzioni,[],[],0).%Stato iniziale, Stato finale, Lista di azioni compiute, lista nodi visitati, lista nodi da visitare, costo passi fatti
+    aStar(S,SFinale,ListaAzioni,[],[],[],0,0).%Stato iniziale, Stato finale, Lista di azioni compiute, lista nodi visitati, lista nodi da visitare, costo passi fatti
 
-aStar(S,_,ListaAzioni,_,_,_):-
+
+aStar(S,_,ListaAzioni,_,_,_,_,_):-
+    %write(stato_inziale_controllo),
+    %write('\n'),
+    %write(S),
+    %write('\n'),
     stattoFinale(S),
     !,
     write(ListaAzioni).
 
-aStar(S,SFinale,ListaAzioni,Visitati,Visitare,Costo):-
+%aStar(S,_,ListaAzioni,_,_,_,_,25).
+
+aStar(S,SFinale,ListaAzioni,Visitati,Visitare,VisitatiStato,Costo,Passi):-
+    %write(stato_inziale_funzione_ricerca),
+    %write('\n'),
+    %write(S),
+    %write('\n'),
     %findall trova tutti i punti di backtracking di trovo mosse
     %trovo mosse esplora il confine e segna (lo stato di partenza, l'azione da eseguire, il costo dato dall'euristica e il costo di movimenti)
-    findall(VisitareAggiornato, trovoMosse(S,SFinale,Visitare,Costo,VisitareAggiornato), Result),
+    %findall(VisitareAggiornato, trovoMosse(S,SFinale,Visitare,Costo,VisitareAggiornato), Result),
+
     
-    %devo poi filtrare dai nodi trovati quelli gia visitati
+    %calolco la lista de dove posso muovermi
+    %(stato attuale,conrdinate movimento, mosse possibili(output))
+    controlloMosse(S,[nord,sud,est,ovest],MossePossibili),
+    !,
+    %write(direzioni_Possibili),
+    %write('\n'),
+    %write(MossePossibili),
+    %write('\n'),
+    
+    %calcolo manhattan sulle direzioni possibili
+    %(stato attiuale,statofinale,mossePossibili,Costo,Visitati,frontiera(output))
+    calcoloCosti(S,SFinale,MossePossibili,Costo,VisitatiStato,Frontiera),
+    !,
+    %write(MossePossibiliFrontiera),
+    %write('\n'),
+    %write(Frontiera),
+    %write('\n'),
+
+    %Aggiorno La frontira
+    append(Visitare,Frontiera,NuovaFrontiera),
+    %write(listaFrontieraTotale),
+    %write('\n'),
+    %write(NuovaFrontiera),
+    %write('\n'),
+
 
     %trovo lo stato da visitare dalla lista della frontiera, sommando a ogni distanza il numero di passi a cui siamo
-    trovaMinimo(Result,Min),
+    trovaMinimo(NuovaFrontiera,Min),
     !,
+    %write(stato_scelto_come_minimo),
+    %nth0(0,Min,StatoTest),
+    %nth0(1,Min,AzTest),
+    %write(StatoTest),
+    %write(AzTest),
 
-    %aumento il numero di passi
-    CostoAggiornato is Costo+1,
 
     %cancello l'elemento dai nodi da visitare / dalla frontiera
-    delete(Result,Min,VisitareAggiornato),
+    delete(NuovaFrontiera,Min,VisitareAggiornato),
 
     %e lo aggiungo hai nodi visitati
     %append(Visitati,Min,VisitatiAggiornato),
 
-    %prendiamo i dari per il nuovo stato
+    %prendiamo i dati per il nuovo stato
     nth0(0,Min,Stato),
     nth0(1,Min,Az),
+    nth0(3,Min,CostoMossa),
+    %write(MinimoScelo),
+    %write('\n'),
+    %write(Stato),
+    %write('\n'),
+    %write(Az),
+    %write('\n'),
 
-    %trasformazione di stato 
-    %trasforma(Stato,Az,NuovoStato),
+    %aumento il numero di passi
+    CostoAggiornato is CostoMossa+1,
+    PassiNuovo is Passi+1,
 
     %segno l'azione
-    %append(ListaAzioni,Az,ListaAzioniAggiorn),
+    append(ListaAzioni,[Az],ListaAzioniAggiorn),
+    append(VisitatiStato,[Stato],VisitatiStatoAggiorn),
+
+    %write(ListaDeiVisitati),
+    %write('\n'),
+    %write(VisitatiStatoAggiorn),
+    %write('\n'),
 
     %richiamo a star sul sul prossimo stato
-    aStar(Stato,SFinale,[ListaAzioni|Az],[Visitati|Min],VisitareAggiornato,CostoAggiornato).
+    aStar(Stato,SFinale,ListaAzioniAggiorn,[Visitati|Min],VisitareAggiornato,VisitatiStatoAggiorn,CostoAggiornato,PassiNuovo).
     
+
+%funzione di supporto che mi da le mosse possibili in base a uno stato
+calcoloCosti(_,_,[],_,_,_).
+
+calcoloCosti(S,SFinale, [Head | Tail], Costo,Visitati,Frontiera) :-
+    trasforma(Head,S,SNuovo),%trasformo lo stato
+    \+member(SNuovo, Visitati),%controllo se gia visitato
+    distanza_manhattan(SNuovo,SFinale,SNuovo,Val),%calcolo la distanza di manhattan 
+    calcoloCosti(S,SFinale, Tail, Costo, Visitati,Res),%rilancio la funzione
+    append([[SNuovo,Head,Val,Costo]],Res,Frontiera).
+    
+  
+calcoloCosti(S,SFinale, [_ | Tail], Costo,Visitati,Frontiera):-
+    calcoloCosti(S,SFinale, Tail, Costo, Visitati,Frontiera).
+    
+    
+
+%funzione interna per trocare la funzione delle mosse
+controlloMosse(_, [], _).
+
+controlloMosse(S, [Head | Tail], ListaPossMosse) :-
+    \+applicabile(Head, S),
+    controlloMosse(S, Tail, ListaPossMosse).
+
+controlloMosse(S, [Head | Tail], ListaPossMosse) :-
+    controlloMosse(S, Tail, Res),
+    append(Res, [Head], ListaPossMosse).
+
 %funzione interna che aggiunge alla lista visitabili i nodi al confine
-trovoMosse(S,SFinale,Visitare,NumeroPassi,Risultato):-
+trovoMosse(S,SFinale,Visitare,NumeroPassi,[Visitare|[Snuova,Az,Val,NumeroPassi]]):-
     applicabile(Az,S),%vedo quali sono le mosse possibili
     trasforma(Az,S,Snuova),%trasformo lo stato
-    distanza_manhattan(Snuova,SFinale,Snuova,Val),%calcolo la distanza di manhattan 
-    append(Visitare,[Snuova,Az,Val,NumeroPassi],Risultato).%inserisco nella lista di quelli da esplorare
+    distanza_manhattan(Snuova,SFinale,Snuova,Val).%calcolo la distanza di manhattan 
+    %append(Visitare,[Snuova,Az,Val,NumeroPassi],Risultato).%inserisco nella lista di quelli da esplorare
 
 %funzione interna per calcolare il minimo di una lista
 trovaMinimo([Min], Min).%caso indutivo per prendere il minimo

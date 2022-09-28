@@ -12,7 +12,7 @@ applicabile(sud,Lista):-
 
 applicabile(est,Lista):-
     nth0(X, Lista, 0),
-    X\=3,
+    X\=2,
     X\=5,
     X\=8.
 
@@ -42,14 +42,6 @@ trasforma(ovest,Lista,ListaModificata):-
     replace(L2,X,Elem2,ListaModificata), %scambio
     !.
 
-trasforma(nord,Lista,ListaModificata):-
-    nth0(X, Lista, 0), %trovo lo 0
-    Su is X-3, %prendo la posizione in cui c'e' il numero che voglio spostare
-    nth0(X,Lista,Elem1), %prendo il valore di 0
-    nth0(Su,Lista,Elem2), %prendo il valore dell'elemento a sopra  0
-    replace(Lista,Su,Elem1,L2), %scambio
-    replace(L2,X,Elem2,ListaModificata), %scambio
-    !.
 
 trasforma(sud,Lista,ListaModificata):-
     nth0(X, Lista, 0), %trovo lo 0
@@ -57,6 +49,15 @@ trasforma(sud,Lista,ListaModificata):-
     nth0(X,Lista,Elem1), %prendo il valore di 0
     nth0(Giu,Lista,Elem2), %prendo il valore dell'elemento a sotto 0
     replace(Lista,Giu,Elem1,L2), %scambio
+    replace(L2,X,Elem2,ListaModificata), %scambio
+    !.
+
+trasforma(nord,Lista,ListaModificata):-
+    nth0(X, Lista, 0), %trovo lo 0
+    Su is X-3, %prendo la posizione in cui c'e' il numero che voglio spostare
+    nth0(X,Lista,Elem1), %prendo il valore di 0
+    nth0(Su,Lista,Elem2), %prendo il valore dell'elemento a sopra  0
+    replace(Lista,Su,Elem1,L2), %scambio
     replace(L2,X,Elem2,ListaModificata), %scambio
     !.
 
